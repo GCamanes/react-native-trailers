@@ -6,13 +6,13 @@ export class TrailerScreen extends React.Component {
         super(props);
 
         this.state = {
-            title: this.props.navigation.getParam('title', 'pas de trailer')
+            trailer: this.props.navigation.getParam('trailer', 'pas de trailer')
         }
     }
     render() {
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>Trailer : {this.state.title}</Text>
+                <Text>Trailer : {this.state.trailer.title}</Text>
             </View>
         );
     }
