@@ -6,35 +6,60 @@
  * @flow
  */
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, Button} from 'react-native';
+import React, { Component } from 'react';
+import { Platform, StyleSheet, Text, View, Button, ScrollView, TouchableHighlight, FlatList } from 'react-native';
 
-import { createAppContainer, createStackNavigator, StackActions, NavigationActions } from "react-navigation";
+import { createAppContainer, createStackNavigator } from "react-navigation";
 
-import {TrailerList} from "./components/TrailerList"
+import { TrailerScreen } from "./components/TrailerScreen"
+
+const urlAPITrailers = 'http://192.168.10.48:8080/trailers';
 
 class App extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { films: [] };
+  }
+
+  _keyExtractor = (item, index) => item.title;
+  _renderItem = ({ item }) => (
+    <TouchableHighlight onPress={() => { this.props.navigation.navigate('Trailer', {title:item.title}) }}>
+      <Text>{item.title}</Text>
+    </TouchableHighlight>
+  );
+
+  componentDidMount() {
+    fetch(urlAPITrailers)
+    .then(response => {
+      if (response.status === 200) {
+        return response.json();
+      } else {
+        throw new Error('Something went wrong on api server!');
+      }
+    })
+    .then(response => {
+      console.debug(response);
+      this.setState({
+        films: response
+      });
+    }).catch(error => {
+      console.error(error);
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to trailers app !</Text>
-        <Button
-          title="Go to Details"
-          onPress={() => {this.props.navigation.navigate({ routeName: 'Trailer' })}}
+        <Text style={styles.welcome}>{this.state.films.length}</Text>
+        <FlatList
+          data={this.state.films}
+          keyExtractor={this._keyExtractor}
+          renderItem={this._renderItem}
         />
       </View>
     );
   }
-}
-
-class DetailsScreen extends React.Component {
-  render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Details Screen</Text>
-      </View>
-    );
-  }  
 }
 
 const AppNavigator = createStackNavigator({
@@ -42,7 +67,7 @@ const AppNavigator = createStackNavigator({
     screen: App
   },
   Trailer: {
-    screen: DetailsScreen
+    screen: TrailerScreen
   }
 });
 
