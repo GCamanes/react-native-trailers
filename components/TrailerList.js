@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Platform, StyleSheet, Text, View, Button, ScrollView, TouchableHighlight, FlatList } from 'react-native';
 
-import { TrailerContext } from "../context/TrailerContext"
+import {_storeData, _retrieveData} from "../storage/AsyncStorage"
+
 import { TrailerListItem } from "./TrailerListItem"
-import { TrailerScreen } from "./TrailerScreen"
 
 const urlAPITrailers = 'http://192.168.10.48:8080/trailers';
 
@@ -35,7 +35,7 @@ export class TrailerList extends React.Component {
                     films: list
                 });
             }).catch(error => {
-                console.error(error);
+                console.log(error);
             });
     }
 
